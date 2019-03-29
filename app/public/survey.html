@@ -4,7 +4,7 @@
 
   <!-- Latest compiled and minified CSS & JS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
   <script src="https://code.jquery.com/jquery.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <!-- <script src="app.js"></script> -->
@@ -25,13 +25,15 @@
     <h2><strong>About You</strong></h2>
     <hr>
     
-    <form action="">
-
-      <h4>Name (Required)</h4>
-      <input type="text" id="name" class="form-control" required="">
-
-      <h4>Link to Photo Image (Required)</h4>
-      <input type="text" id="photo" class="form-control" required="">
+    <form action="/survey">
+      <div class="form-group">
+        <h4>Name (Required)</h4>
+        <input type="text" id="name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <h4>Link to Photo Image (Required)</h4>
+        <input type="text" id="photo" class="form-control" required>
+      </div>
       
       <hr>
   
@@ -39,9 +41,11 @@
       
       <label class=questions-view></label>
 
-      <button class="btn btn-primary btn-lg btn-block">Submit</button>
+      <button class="btn btn-primary btn-lg btn-block submit" type="submit">Submit</button>
        
     </form>
+    <button class="btn btn-primary btn-lg btn-block" type="submit" id="submitList" action="function()">Submit list</button>
+
     <hr>
 
     <footer class="footer">
@@ -52,85 +56,118 @@
 
   </div>
 
-  <style type="text/css" media="screen">
+  </body>
+</html>
 
-    html,body {padding:0;margin:0;}
-    .wrap {
-      font:12px Arial, san-serif;
-    }
-    h1.likert-header {
-      padding-left:4.25%;
-      margin:20px 0 0;
-    }
-    .questions-view {
-      width: 100%;
-    }
-    form .statement {
-      display:block;
-      font-size: 14px;
-      font-weight: bold;
-      padding: 30px 0 0 4.25%;
-      margin-bottom:10px;
-    }
-    form .likert {
-      list-style:none;
-      width:100%;
-      margin:0;
-      padding:0 0 35px;
-      display:block;
-      border-bottom:2px solid #efefef;
-    }
-    form .likert:last-of-type {border-bottom:0;}
-    form .likert:before {
-      content: '';
-      position:relative;
-      top:11px;
-      left:9.5%;
-      display:block;
-      background-color:#efefef;
-      height:4px;
-      width:78%;
-    }
-    form .likert li {
-      display:inline-block;
-      width:19%;
-      text-align:center;
-      vertical-align: top;
-    }
-    form .likert li input[type=radio] {
-      display:block;
-      position:relative;
-      top:0;
-      left:50%;
-      margin-left:-6px; 
-    }
-    form .likert li label {
-      width:100%;
-    }
-    form .buttons {
-      margin:30px 0;
-      padding:0 4.25%;
-      text-align:right
-    } 
-    form .buttons button {
-      padding: 5px 10px;
-      background-color: darkcyan;
-      border: 0;
-      border-radius: 3px;
-      width: 100%;
-    }
-    form .buttons .submit {
-      background-color: darkcyan;
-      width: 100%;
-    } 
-    form .buttons .submit:hover {
-      background-color: #14892c;
-    }
-  </style>
+<style type="text/css" media="screen">
 
-  <script type="text/javascript">
+  html,body {padding:0;margin:0;}
+  .wrap {
+    font:12px Arial, san-serif;
+  }
+  h1.likert-header {
+    padding-left:4.25%;
+    margin:20px 0 0;
+  }
+  .questions-view {
+    width: 100%;
+  }
+  form .statement {
+    display:block;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 30px 0 0 4.25%;
+    margin-bottom:10px;
+  }
+  form .likert {
+    list-style:none;
+    width:100%;
+    margin:0;
+    padding:0 0 35px;
+    display:block;
+    border-bottom:2px solid #efefef;
+  }
+  form .likert:last-of-type {border-bottom:0;}
+  form .likert:before {
+    content: '';
+    position:relative;
+    top:11px;
+    left:9.5%;
+    display:block;
+    background-color:#efefef;
+    height:4px;
+    width:78%;
+  }
+  form .likert li {
+    display:inline-block;
+    width:19%;
+    text-align:center;
+    vertical-align: top;
+  }
+  form .likert li input[type=radio] {
+    display:block;
+    position:relative;
+    top:0;
+    left:50%;
+    margin-left:-6px; 
+  }
+  form .likert li label {
+    width:100%;
+  }
+  form .buttons {
+    margin:30px 0;
+    padding:0 4.25%;
+    text-align:right
+  } 
+  form .buttons button {
+    padding: 5px 10px;
+    background-color: darkcyan;
+    border: 0;
+    border-radius: 3px;
+    width: 100%;
+  }
+  form .buttons .submit {
+    background-color: darkcyan;
+    width: 100%;
+  } 
+  form .buttons .submit:hover {
+    background-color: #14892c;
+  }
+</style>
 
-    var surveyItems = [
+<script type="text/javascript">
+
+  $(".submit").on("click", function(event) {
+    event.preventDefault();
+
+    var newFriend = {
+      name: $("#name").val().trim(),
+      photo: $("#photo").val().trim(),
+      scores: listAnswers()
+    };
+
+    console.log(newFriend);
+
+    $.post("/api/friends", newFriend,
+      function(data) {
+
+        if (data) {
+        // Here the alert should reveal the nearest match
+          alert("Yay! You got a match!");
+        }
+        else {
+          alert("Sorry. You appear to be one of a kind, a unique individual, compatible with no one.");
+        }
+
+        // Clear the form after each submission
+        $("#name").val("");
+        $("#phone").val("");
+
+      });
+
+  });
+
+  var surveyItems = [
     "I would enjoy going on crazy thrill rides at an amusement park.",
     "When faced with important decisions, I rely on logic and strategizing more than gut instincts or intuitions.",
     "I find it easy to stay calm and focused even in an emergency.",
@@ -151,10 +188,6 @@
     "Strongly disagree"
   ];
 
-  function showResults() {
-    console.log("Clicked");
-  }
-
   function presentQuestions() {
     for(var i = 0; i < surveyItems.length; i++) {
       $(".questions-view").append("<h4 class='statement'>Question " + (i + 1) + "</h4>");
@@ -167,9 +200,18 @@
   function renderLikertScale(question_number) {
     var result = "<ul class='likert'>";
     for(var i = 0; i < scale.length; i++) {
-      result += "<li><input type='radio' name='likert' value='q" + question_number + " a" + (i + 1) + "'><label>" + scale[i] + "</label></li>";
+      result += "<li><input type='radio' id='question_" + question_number + "' name=question_" + question_number + " value='" + (i + 1) + "' required><label>" + scale[i] + "</label></li>";
     }
     return result += "</ul>";
+  }
+
+  function listAnswers() {
+    var arr = [];
+    for(var i = 1; i < 11; i++) {
+      var radioValue = $("input[name='question_" + i + "']:checked").val();
+      arr.push(radioValue);
+    }
+    return arr;
   }
 
   $(document).ready(function(){
@@ -177,6 +219,3 @@
   });
   
   </script>
-
-  </body>
-</html>
