@@ -44,7 +44,6 @@
       <button class="btn btn-primary btn-lg btn-block submit" type="submit">Submit</button>
        
     </form>
-    <button class="btn btn-primary btn-lg btn-block" type="submit" id="submitList" action="function()">Submit list</button>
 
     <hr>
 
@@ -150,6 +149,7 @@
 
     $.post("/api/friends", newFriend,
       function(data) {
+        console.log("Tried to post " + data);
 
         if (data) {
         // Here the alert should reveal the nearest match

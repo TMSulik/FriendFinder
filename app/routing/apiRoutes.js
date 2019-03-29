@@ -1,6 +1,6 @@
 // ===========================================================
 // LOAD DATA
-// Link the routes to a series of "data" sources.
+// Links the routes to a series of "data" sources.
 // These data sources hold arrays of information on the friends array.
 // =============================================================
 
@@ -8,44 +8,63 @@ var friendData = require("../data/friends");
 
 // =======================================================
 // ROUTING
-// ========================================================
+// =======================================================
 
 module.exports = function(app) {
   
-  // API GET request
   app.get("/api/friends", function(req, res) {
     res.json(friendData);
   });
 
-  // API POST request
-  // The code below handles when a user submits a form and thus submits data to the server.
-  // When a user submits form data (a JSON object),
-  // the JSON is pushed to the appropriate JavaScript array
-  // The user fills out a survey. This data is then sent to the server.
-  // Then the server saves the data to the friends array)
-
   app.post("/api/friends", function(req, res) {
-    
+    console.log(req.body.scores);
+
     friendData.push(req.body);
-  
+    res.json(true);
+
+    var mySurvey = req.body.scores;
+    var othersSurveys = [];
+
+    // Get survey results for other users
+    for(var i = 0; i < friendData.length-1; i++) {
+      othersSurveys.push(friendData[i].scores);
+    }
+
+    // Score the differences between a pair of responses
+    var calculateDifference = function(a, b) {
+      var result = 0;
+      for(var i = 0; i < a.length; i++) {
+        if(a[i] > b[i]) {
+          result += a[i] - b[i];
+        }
+        if(a[i] < b[i]) {
+          result += b[i] - a[i];
+        }
+      }
+      return result;
+    };
+
+    // Find the response that matches closest to user's
+    var bestMatch = function () {
+      var best = []; 
+      var difference = 40; // Max possible difference
+      for(var i = 0; i < othersSurveys.length; i++) {
+        if(calculateDifference(mySurvey, othersSurveys[i]) < difference) {
+          difference = othersSurveys[i];
+          best = [friendData[i].name, friendData[i].photo];
+        }
+      }
+      return best;
+    };
+    console.log("Best match: ", bestMatch);
   });
 
-  // The code below clears out the friends array.
-  app.post("/api/clear", function(req, res) {
-    // Empty the array
-    friendData.length = [];
-
-  });
 };
 
-// From class lecture
-// var db = require('../models');
-// module.exports = function(app) {
-//   app.get('/api/todos'), function(req, res) {
-//     db.Todo.findAll({}).then (function(dbTodo) {
-//       res.json(dbTodo);
-//     }).catch(function(err) {
-//       res.json(err);
-//     });
-//   };
+//   // The code below clears out the friends array.
+//   app.post("/api/clear", function(req, res) {
+//     // Empty the array
+//     friendData.length = [];
+
+//   });
 // };
