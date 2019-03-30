@@ -12,9 +12,12 @@ const PORT = process.env.PORT || 8080;
 // app.use('/', routes);
 
 app.use(express.static("public"));
+app.use('/css',express.static(__dirname +'/css'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+
 
 require("./app/routing/apiRoutes")(app);
 require("./app/routing/htmlRoutes")(app);

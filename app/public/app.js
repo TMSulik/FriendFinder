@@ -12,16 +12,12 @@ var surveyItems = [
 ];
 
 var scale = [
-  "Strongly agree",
-  "Agree",
-  "Neutral",
+  "Strongly disagree",
   "Disagree",
-  "Strongly disagree"
+  "Neutral",
+  "Agree",
+  "Strongly agree"
 ];
-
-function showResults() {
-  console.log("Clicked");
-}
 
 function presentQuestions() {
   for(var i = 0; i < surveyItems.length; i++) {

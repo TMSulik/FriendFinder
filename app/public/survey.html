@@ -4,7 +4,7 @@
 
   <!-- Latest compiled and minified CSS & JS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="/css/style.css" /> -->
   <script src="https://code.jquery.com/jquery.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <!-- <script src="app.js"></script> -->
@@ -44,6 +44,26 @@
       <button class="btn btn-primary btn-lg btn-block submit" type="submit">Submit</button>
        
     </form>
+
+    <!-- Modal after survey completion -->
+		<div id="newMatchPopup" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h3 class="modal-title">We found a match!</h1>
+					</div>
+					<div class="modal-body">
+						<h2 id="newMatch"></h2>
+            <img id="newMatchPhoto" src="#">
+            <div></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+      </div>
+    </div>
 
     <hr>
 
@@ -132,6 +152,13 @@
   form .buttons .submit:hover {
     background-color: #14892c;
   }
+  #newMatchPopup {
+  	text-align: center;
+  }
+  #newMatchPhoto {
+    max-width: 100%;
+    height: auto;
+  }
 </style>
 
 <script type="text/javascript">
@@ -145,15 +172,41 @@
       scores: listAnswers()
     };
 
-    console.log(newFriend);
+    function checkForCompletedForm() {
+      if(newFriend.name === '') {
+        alert("Please enter your name");
+        return false;
+      }
+      if(newFriend.photo === '') {
+        alert("Please include a link to your photo");
+        return false;
+      }
+      if(newFriend.scores.includes(undefined)) {
+        alert("Please answer all questions before clicking submit");
+        return false;
+      }
+      return true;
+    }
 
-    $.post("/api/friends", newFriend,
+    if(checkForCompletedForm()) {
+      $.post("/api/friends", newFriend,
       function(data) {
-        console.log("Tried to post " + data);
-
         if (data) {
         // Here the alert should reveal the nearest match
-          alert("Yay! You got a match!");
+        console.log("Match to present: " + data.name);
+        console.log("User's profile: " + JSON.stringify(newFriend));
+          // alert("Yay! You got a match!");
+
+        $("#newMatch").text(data.name);
+        $("#newMatchPhoto").attr("src", data.photo);
+        // var currentImage = data.photo;
+        // currentImage.wrap("<a href='" + currentImage.attr("src") + "' </a>");
+        // $("#newMatchPhoto").wrap(function() {
+        //   return "<img src='" + data.photo + "'>";
+        // });
+
+        $("#newMatchPopup").modal("toggle");
+
         }
         else {
           alert("Sorry. You appear to be one of a kind, a unique individual, compatible with no one.");
@@ -164,6 +217,7 @@
         $("#phone").val("");
 
       });
+    }
 
   });
 
@@ -181,11 +235,11 @@
   ];
 
   var scale = [
-    "Strongly agree",
-    "Agree",
-    "Neutral",
+    "Strongly disagree",
     "Disagree",
-    "Strongly disagree"
+    "Neutral",
+    "Agree",
+    "Strongly agree"
   ];
 
   function presentQuestions() {

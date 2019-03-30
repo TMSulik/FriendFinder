@@ -7,8 +7,8 @@
 var friends = [
   {
     name: "Twiggy",
-    photo: "https://www.npg.org.uk/collections/search/use-this-image.php?mkey=mw197366",
-    scores: [5, 1, 4, 4, 5, 1, 2, 5, 4, 1]
+    photo: "https://www.dropbox.com/s/cuexp7xoh9dcb6d/twiggy.jpg?dl=0",
+    scores: [1, 1, 1, 1, 1, 1, 2, 1, 1, 1]
   }, {
     name: "Kong",
     photo: "https://tarzan.fandom.com/wiki/Gorillas?file=5acfb95be73c8.jpg",
@@ -19,8 +19,8 @@ var friends = [
     scores: [3, 4, 5, 2, 3, 3, 2, 3, 2, 1]
   }, {
     name: "Momo",
-    photo: "https://knowyourmeme.com/memes/momo-challenge/photos/sort/oldest",
-    scores: [5, 3, 4, 5, 2, 3, 4, 2, 2, 2]
+    photo: "https://www.dropbox.com/s/xk7oavfdtzn9x8a/momo.jpg?dl=0",
+    scores: [5, 3, 4, 5, 5, 5, 4, 5, 5, 5]
   }
 ];
 

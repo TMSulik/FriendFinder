@@ -17,46 +17,54 @@ module.exports = function(app) {
   });
 
   app.post("/api/friends", function(req, res) {
-    console.log(req.body.scores);
 
     friendData.push(req.body);
-    res.json(true);
 
     var mySurvey = req.body.scores;
     var othersSurveys = [];
+    var othersProfiles = [];
 
     // Get survey results for other users
     for(var i = 0; i < friendData.length-1; i++) {
       othersSurveys.push(friendData[i].scores);
     }
 
-    // Score the differences between a pair of responses
-    var calculateDifference = function(a, b) {
-      var result = 0;
-      for(var i = 0; i < a.length; i++) {
-        if(a[i] > b[i]) {
-          result += a[i] - b[i];
+    // Get names and pics of other users
+    // for(var i = 0; i < friendData.length-1; i++) {
+    //   othersProfiles.push([friendData[i].name, friendData[i].photo]);
+    // }
+
+    // Score the differences between any pair of surveys
+    var calculateDifference = function(survey_a, survey_b) {
+      var cumulativeDifference = 0;
+      for(var i = 0; i < survey_a.length; i++) {
+        if(survey_a[i] > survey_b[i]) {
+          cumulativeDifference += survey_a[i] - survey_b[i];
         }
-        if(a[i] < b[i]) {
-          result += b[i] - a[i];
+        if(survey_a[i] < survey_b[i]) {
+          cumulativeDifference += survey_b[i] - survey_a[i];
         }
       }
-      return result;
+      return cumulativeDifference;
     };
 
-    // Find the response that matches closest to user's
+    // Find the response that most nearly matches the user's
     var bestMatch = function () {
       var best = []; 
       var difference = 40; // Max possible difference
       for(var i = 0; i < othersSurveys.length; i++) {
         if(calculateDifference(mySurvey, othersSurveys[i]) < difference) {
-          difference = othersSurveys[i];
-          best = [friendData[i].name, friendData[i].photo];
+          difference = calculateDifference(mySurvey, othersSurveys[i]);
+          // best = othersProfiles[i];
+          best = friendData[i];
         }
       }
       return best;
     };
-    console.log("Best match: ", bestMatch);
+
+    console.log("Best match: ", bestMatch());
+
+    res.json(bestMatch());
   });
 
 };
